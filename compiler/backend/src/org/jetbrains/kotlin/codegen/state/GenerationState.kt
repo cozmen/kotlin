@@ -185,7 +185,10 @@ class GenerationState @JvmOverloads constructor(
     init {
         this.interceptedBuilderFactory = builderFactory
                 .wrapWith(
-                    { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
+                    {
+                        val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
+                        OptimizationClassBuilderFactory(it, disableOptimization, languageVersionSettings)
+                    },
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, this.bindingContext, diagnostics, this.moduleName,
                             shouldGenerate = { !shouldOnlyCollectSignatures(it) }
