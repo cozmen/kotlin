@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -44,7 +45,7 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
                     val expression = argument.getArgumentExpression() as? KtStringTemplateExpression ?: continue
                     val text = expression.text
                     if (text.firstOrNull() != '\"' || text.lastOrNull() != '\"') continue
-                    val newDiagnosticFactory = MIGRATION_MAP[text.drop(1).dropLast(1)] ?: continue
+                    val newDiagnosticFactory = MIGRATION_MAP[StringUtil.unquoteString(text)] ?: continue
 
                     holder.registerProblem(
                             expression,
