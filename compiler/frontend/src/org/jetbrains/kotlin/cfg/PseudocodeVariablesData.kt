@@ -38,6 +38,7 @@ private typealias ImmutableSet<T> = javaslang.collection.Set<T>
 private typealias ImmutableHashSet<T> = javaslang.collection.HashSet<T>
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
+    private val containsDoWhile = pseudocode.rootPseudocode.containsDoWhile
     private val pseudocodeVariableDataCollector = PseudocodeVariableDataCollector(bindingContext, pseudocode)
 
     class VariablesForDeclaration(
@@ -102,8 +103,9 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                             bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
                         ) ?: continue
 
-                if (variableDeclarationElement is KtParameter || variableDeclarationElement is KtObjectDeclaration ||
-                    variableDeclarationElement.safeAs<KtVariableDeclaration>()?.isSimpleValWithInitializer(descriptor) == true) {
+                if (!containsDoWhile &&
+                        (variableDeclarationElement is KtParameter || variableDeclarationElement is KtObjectDeclaration ||
+                            variableDeclarationElement.safeAs<KtVariableDeclaration>()?.isSimpleValWithInitializer(descriptor) == true)) {
                     simpleVals.add(descriptor)
                 }
                 else {
